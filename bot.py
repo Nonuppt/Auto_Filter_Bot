@@ -84,6 +84,16 @@ def dreamxbotz_plugins_handler(app, plugins_dir: str | Path = "plugins", package
 
 async def dreamxbotz_start():
     print('\n\nInitalizing DreamxBotz')
+
+    # Start Web Server First to pass Render Health Checks immediately
+    print('\n\nStarting Web Server...')
+    app = web.AppRunner(await web_server())
+    await app.setup()
+    bind_address = "0.0.0.0"
+    await web.TCPSite(app, bind_address, PORT).start()
+    dreamxbotz.loop.create_task(keep_alive())
+    print('\n\nWeb Server Started')
+
     await dreamxbotz.start()
     bot_info = await dreamxbotz.get_me()
     dreamxbotz.username = bot_info.username
@@ -119,11 +129,6 @@ async def dreamxbotz_start():
     now = datetime.now(tz)
     time = now.strftime("%H:%M:%S %p")
     await dreamxbotz.send_message(chat_id=LOG_CHANNEL, text=script.RESTART_TXT.format(temp.B_LINK, today, time))
-    app = web.AppRunner(await web_server())
-    await app.setup()
-    bind_address = "0.0.0.0"
-    await web.TCPSite(app, bind_address, PORT).start()
-    dreamxbotz.loop.create_task(keep_alive())
     await idle()
     
 if __name__ == '__main__':
