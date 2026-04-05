@@ -11,7 +11,7 @@ from pyrogram.types import (
 )
 from pyrogram.errors import MessageNotModified, MessageTooLong
 from plugins.Dreamxfutures.Imdbposter import get_movie_detailsx
-from info import ADMINS, MOVIE_UPDATE_CHANNEL, ABOVE_PREVIEW
+from info import ADMINS, MOVIE_UPDATE_CHANNELS, ABOVE_PREVIEW
 from utils import temp
 
 #code is created by @bharath_boy for public use so atleast don't remove credits
@@ -601,18 +601,25 @@ async def finalize_and_post(client: Client, query: CallbackQuery, session_id: in
 
     try:
         if mode == "Photo":
-            await client.send_photo(
-                chat_id=MOVIE_UPDATE_CHANNEL, photo=poster_to_use,
-                caption=final_caption, reply_markup=final_keyboard
-            )
+            for channel_id in MOVIE_UPDATE_CHANNELS:
+                try:
+                    await client.send_photo(
+                        chat_id=channel_id, photo=poster_to_use,
+                        caption=final_caption, reply_markup=final_keyboard
+                    )
+                except Exception as e:
+                    logger.error(f"Failed to post '{session['movie_name']}' to channel {channel_id}: {e}")
         else:
             text_content = f"<a href='{poster_to_use}'>&#8205;</a>{final_caption}" if poster_to_use else final_caption
-            await client.send_message(
-                chat_id=MOVIE_UPDATE_CHANNEL, text=text_content,
-                
-                reply_markup=final_keyboard, disable_web_page_preview=False,
-                invert_media=ABOVE_PREVIEW
-            )
+            for channel_id in MOVIE_UPDATE_CHANNELS:
+                try:
+                    await client.send_message(
+                        chat_id=channel_id, text=text_content,
+                        reply_markup=final_keyboard, disable_web_page_preview=False,
+                        invert_media=ABOVE_PREVIEW
+                    )
+                except Exception as e:
+                    logger.error(f"Failed to post '{session['movie_name']}' to channel {channel_id}: {e}")
 
         await status_msg.edit("✅ Post has been sent to the update channel.")
         logger.info(
