@@ -304,7 +304,7 @@ async def _process_with_lock(bot, filename, caption, media_info, base_name, proc
 
     if not movie_doc:
         if TMDB_POSTER:
-            details = await get_movie_detailsx(base_name)
+            details = await get_movie_detailsx(base_name) or {}
             if details.get("error") or not details.get("poster_url") and not details.get("backdrop_url"):
                 error_tmdb=True
                 logger.info("TMDB error switching to IMDB")
@@ -566,9 +566,12 @@ def generate_movie_message(movie_doc, base_name):
     language_str = ", ".join(sorted(all_languages)) if all_languages else "N/A"
     ott_str = ", ".join(sorted(all_ott_platforms)) if all_ott_platforms else "N/A"
 
+    poster_url = movie_doc.get("poster_url") or ""
+    imdb_url = movie_doc.get("imdb_url") or ""
+
     return script.MOVIE_UPDATE_NOTIFY_TXT.format(
-        poster_url=movie_doc.get("poster_url", ""),
-        imdb_url=movie_doc.get("imdb_url", ""),
+        poster_url=poster_url,
+        imdb_url=imdb_url,
         filename=base_name,
         tag=primary_tag,
         genres=genres,
