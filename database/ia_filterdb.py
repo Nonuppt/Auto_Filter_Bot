@@ -98,12 +98,30 @@ async def save_file(media):
     file_name = re.sub(r"\s+", " ", file_name).strip()
     saveMedia = Media
     target_db = "Primary"
+
+    # Check for duplicates by file_name and file_size in Primary DB
+    try:
+        exists = await Media.count_documents(
+            {"$or": [{"file_id": file_id}, {"file_name": file_name, "file_size": media.file_size}]},
+            limit=1
+        )
+        if exists:
+            logger.info(f"[SKIP] '{file_name}' already exists in Primary DB.")
+            return False, 0
+    except Exception as e:
+        logger.error("Error during duplicate check in primary DB.", exc_info=e)
+
     if MULTIPLE_DB:
         try:
-            exists = await Media.count_documents({"file_id": file_id}, limit=1)
-            if exists:
-                logger.info(f"[SKIP] '{file_name}' already in Primary DB.")
+            # Check for duplicates by file_name and file_size in Secondary DB
+            exists2 = await Media2.count_documents(
+                {"$or": [{"file_id": file_id}, {"file_name": file_name, "file_size": media.file_size}]},
+                limit=1
+            )
+            if exists2:
+                logger.info(f"[SKIP] '{file_name}' already exists in Secondary DB.")
                 return False, 0
+
             primary_db_size = await check_db_size(db)
             if primary_db_size >= 407:
                 saveMedia = Media2

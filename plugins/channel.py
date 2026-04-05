@@ -6,7 +6,7 @@ from collections import defaultdict
 from plugins.Dreamxfutures.Imdbposter import get_movie_detailsx, fetch_image, get_movie_details
 from database.users_chats_db import db
 from pyrogram import Client, filters, enums
-from info import CHANNELS, MOVIE_UPDATE_CHANNEL, LINK_PREVIEW, ABOVE_PREVIEW, BAD_WORDS, LANDSCAPE_POSTER, TMDB_POSTER
+from info import CHANNELS, MOVIE_UPDATE_CHANNELS, LINK_PREVIEW, ABOVE_PREVIEW, BAD_WORDS, LANDSCAPE_POSTER, TMDB_POSTER
 from Script import script
 from database.ia_filterdb import save_file
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -375,33 +375,47 @@ async def send_movie_update(bot, base_name):
                 )
             ]])
             size=(2560, 1440) if LANDSCAPE_POSTER and TMDB_POSTER and movie_doc.get("is_backdrop") and not movie_doc.get("error_tmdb") else (853, 1280)
-            if movie_doc.get("poster_url") and not LINK_PREVIEW:
-                resized_poster = await fetch_image(movie_doc["poster_url"], size)
-                msg = await bot.send_photo(
-                    chat_id=MOVIE_UPDATE_CHANNEL,
-                    photo=resized_poster,
-                    caption=text,
-                    reply_markup=buttons,
-                    parse_mode=enums.ParseMode.HTML
-                )
-                is_photo = True
-            else:
-                send_params = {
-                    "chat_id": MOVIE_UPDATE_CHANNEL,
-                    "text": text,
-                    "reply_markup": buttons,
-                    "parse_mode": enums.ParseMode.HTML
-                }
-                if movie_doc.get("poster_url") and LINK_PREVIEW:
-                    send_params["invert_media"] = ABOVE_PREVIEW
-                msg = await bot.send_message(**send_params)
-                is_photo = False
 
-            await db.movie_updates.update_one(
-                {"_id": base_name},
-                {"$set": {"message_id": msg.id, "is_photo": is_photo}}
-            )
-            return msg
+            message_ids = {}
+            first_msg_id = None
+            is_photo = False
+
+            for channel_id in MOVIE_UPDATE_CHANNELS:
+                try:
+                    if movie_doc.get("poster_url") and not LINK_PREVIEW:
+                        resized_poster = await fetch_image(movie_doc["poster_url"], size)
+                        msg = await bot.send_photo(
+                            chat_id=channel_id,
+                            photo=resized_poster,
+                            caption=text,
+                            reply_markup=buttons,
+                            parse_mode=enums.ParseMode.HTML
+                        )
+                        is_photo = True
+                    else:
+                        send_params = {
+                            "chat_id": channel_id,
+                            "text": text,
+                            "reply_markup": buttons,
+                            "parse_mode": enums.ParseMode.HTML
+                        }
+                        if movie_doc.get("poster_url") and LINK_PREVIEW:
+                            send_params["invert_media"] = ABOVE_PREVIEW
+                        msg = await bot.send_message(**send_params)
+                        is_photo = False
+
+                    message_ids[str(channel_id)] = msg.id
+                    if first_msg_id is None:
+                        first_msg_id = msg.id
+                except Exception as e:
+                    logger.error(f"Failed to send movie update to channel {channel_id}: {e}")
+
+            if message_ids:
+                await db.movie_updates.update_one(
+                    {"_id": base_name},
+                    {"$set": {"message_id": first_msg_id, "message_ids": message_ids, "is_photo": is_photo}}
+                )
+            return message_ids
         except FloodWait as e:
             wait_time = e.value + 2
             await asyncio.sleep(wait_time)
@@ -425,49 +439,65 @@ async def update_movie_message(bot, base_name):
         ]])
 
         message_id = movie_doc.get("message_id")
+        message_ids = movie_doc.get("message_ids", {})
         is_photo = movie_doc.get("is_photo", False)
 
-        if not message_id:
+        if not message_id and not message_ids:
             await send_movie_update(bot, base_name)
             return
 
-        try:
-            if is_photo:
-                await bot.edit_message_caption(
-                    chat_id=MOVIE_UPDATE_CHANNEL,
-                    message_id=message_id,
-                    caption=text,
-                    reply_markup=buttons,
-                    parse_mode=enums.ParseMode.HTML
-                )
-            else:
-                await bot.edit_message_text(
-                    chat_id=MOVIE_UPDATE_CHANNEL,
-                    message_id=message_id,
-                    text=text,
-                    reply_markup=buttons,
-                    parse_mode=enums.ParseMode.HTML,
-                    invert_media=ABOVE_PREVIEW,
-                    disable_web_page_preview=not LINK_PREVIEW
-                )
-            return
-        except (MessageIdInvalid, MessageNotModified) as e:
-            logger.warning(f"Message update skipped due to error: {e}")
-            pass
-        except Exception:
+        # Backward compatibility for existing single message docs
+        if message_id and not message_ids and MOVIE_UPDATE_CHANNELS:
+            message_ids = {str(MOVIE_UPDATE_CHANNELS[0]): message_id}
+
+        all_failed = True
+        for channel_id in MOVIE_UPDATE_CHANNELS:
+            ch_str = str(channel_id)
+            if ch_str not in message_ids:
+                continue
+
+            msg_id = message_ids[ch_str]
             try:
-                await bot.delete_messages(
-                    chat_id=MOVIE_UPDATE_CHANNEL,
-                    message_ids=message_id
-                )
-                await db.movie_updates.update_one(
-                    {"_id": base_name},
-                    {"$set": {"message_id": None, "is_photo": False}}
-                )
-            except Exception as e:
-                logger.error(f"Error during message deletion/update in recovery: {e}")
+                if is_photo:
+                    await bot.edit_message_caption(
+                        chat_id=channel_id,
+                        message_id=msg_id,
+                        caption=text,
+                        reply_markup=buttons,
+                        parse_mode=enums.ParseMode.HTML
+                    )
+                else:
+                    await bot.edit_message_text(
+                        chat_id=channel_id,
+                        message_id=msg_id,
+                        text=text,
+                        reply_markup=buttons,
+                        parse_mode=enums.ParseMode.HTML,
+                        invert_media=ABOVE_PREVIEW,
+                        disable_web_page_preview=not LINK_PREVIEW
+                    )
+                all_failed = False
+            except (MessageIdInvalid, MessageNotModified) as e:
+                logger.warning(f"Message update skipped for channel {channel_id} due to error: {e}")
+                all_failed = False
                 pass
+            except Exception:
+                try:
+                    await bot.delete_messages(
+                        chat_id=channel_id,
+                        message_ids=msg_id
+                    )
+                except Exception as e:
+                    logger.error(f"Error during message deletion in recovery for channel {channel_id}: {e}")
+                    pass
+
+        if all_failed:
+            await db.movie_updates.update_one(
+                {"_id": base_name},
+                {"$set": {"message_id": None, "message_ids": {}, "is_photo": False}}
+            )
             await send_movie_update(bot, base_name)
+
     except Exception as e:
         logger.error(f"Failed to update movie message for {base_name}: {e}")
 
