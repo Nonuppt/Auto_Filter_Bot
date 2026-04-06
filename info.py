@@ -86,7 +86,7 @@ DATABASE_URI2 = environ.get('DATABASE_URI2', "")  # MongoDB URI for the second d
 # Movie Notification & Update Settings
 # ============================
 MOVIE_UPDATE_NOTIFICATION = bool(environ.get('MOVIE_UPDATE_NOTIFICATION', True))  # Notification On (True) / Off (False)
-MOVIE_UPDATE_CHANNEL = [int(ch) if id_pattern.search(ch) else ch for ch in environ.get('MOVIE_UPDATE_CHANNEL', '-1002481569627-1002414133579').split()]  # Notification of sent to your channel
+MOVIE_UPDATE_CHANNELS = [int(ch) if id_pattern.search(ch) else ch for ch in (environ.get('MOVIE_UPDATE_CHANNELS') or environ.get('MOVIE_UPDATE_CHANNEL', '-1002481569627 -1002414133579')).split()]; MOVIE_UPDATE_CHANNEL = MOVIE_UPDATE_CHANNELS[0] if MOVIE_UPDATE_CHANNELS else None # Notification of sent to your channel
 DREAMXBOTZ_IMAGE_FETCH = bool(environ.get('DREAMXBOTZ_IMAGE_FETCH', True))  # On (True) / Off (False)
 LINK_PREVIEW = bool(environ.get('LINK_PREVIEW', False)) # Shows link preview in notification msg instead of image
 ABOVE_PREVIEW = bool(environ.get('ABOVE_PREVIEW', True)) # Shows link preview above the text in notification msg if True else below the msg
