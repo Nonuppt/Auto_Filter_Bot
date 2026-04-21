@@ -112,7 +112,6 @@ OTT_PLATFORMS = [
     "JioCinema",
     "MX Player",
     "SonyLIV",
-    "Stage",
     "Sun NXT",
     "Voot",
     "Zee5",
