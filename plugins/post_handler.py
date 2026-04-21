@@ -600,21 +600,24 @@ async def finalize_and_post(client: Client, query: CallbackQuery, session_id: in
     logger.info(f"Final Caption Length: {len(final_caption)} characters.")
 
     try:
-        if mode == "Photo":
-            await client.send_photo(
-                chat_id=MOVIE_UPDATE_CHANNEL, photo=poster_to_use,
-                caption=final_caption, reply_markup=final_keyboard
-            )
-        else:
-            text_content = f"<a href='{poster_to_use}'>&#8205;</a>{final_caption}" if poster_to_use else final_caption
-            await client.send_message(
-                chat_id=MOVIE_UPDATE_CHANNEL, text=text_content,
-                
-                reply_markup=final_keyboard, disable_web_page_preview=False,
-                invert_media=ABOVE_PREVIEW
-            )
+        for channel_id in MOVIE_UPDATE_CHANNEL:
+            try:
+                if mode == "Photo":
+                    await client.send_photo(
+                        chat_id=channel_id, photo=poster_to_use,
+                        caption=final_caption, reply_markup=final_keyboard
+                    )
+                else:
+                    text_content = f"<a href='{poster_to_use}'>&#8205;</a>{final_caption}" if poster_to_use else final_caption
+                    await client.send_message(
+                        chat_id=channel_id, text=text_content,
+                        reply_markup=final_keyboard, disable_web_page_preview=False,
+                        invert_media=ABOVE_PREVIEW
+                    )
+            except Exception as e:
+                logger.error(f"Failed to post to channel {channel_id}: {e}")
 
-        await status_msg.edit("✅ Post has been sent to the update channel.")
+        await status_msg.edit("✅ Post has been sent to the update channel(s).")
         logger.info(
             f"Successfully posted '{session['movie_name']}' to the update channel.")
 
