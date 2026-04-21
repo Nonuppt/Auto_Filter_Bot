@@ -44,7 +44,7 @@ async def fetch_image(url, size=(860, 1200)):
         async with session.get(url) as response:
             if response.status != 200:
                 logger.error(f"Failed to fetch image: {response.status} for {url}")
-                return url
+                return None
 
             data = await response.read()
             img = Image.open(BytesIO(data))
@@ -62,7 +62,7 @@ async def fetch_image(url, size=(860, 1200)):
     except Exception as e:
         logger.error(f"Unexpected error in fetch_image: {e}")
 
-    return url
+    return None
 
 
 async def close_session():

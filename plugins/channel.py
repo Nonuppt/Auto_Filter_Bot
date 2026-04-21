@@ -87,7 +87,6 @@ EP_ONLY_RANGE = re.compile(r'\b(?:EP|Episode)0*(\d{1,3})\s*-\s*0*(\d{1,3})\b',re
 MEDIA_FILTER = filters.document | filters.video | filters.audio
 locks = defaultdict(asyncio.Lock)
 pending_updates = {}
-active_update_tasks = set()
 error_tmdb = False
 
 def clean_mentions_links(text: str) -> str:
@@ -125,17 +124,14 @@ def extract_season_episode(filename: str) -> Tuple[Optional[int], Optional[str]]
 
 def schedule_update(bot, base_name, delay=5):
     if handle := pending_updates.get(base_name):
-        handle.cancel()
+        if not handle.cancelled():
+            handle.cancel()
     
     loop = asyncio.get_event_loop()
-
-    def _run_update():
-        task = asyncio.create_task(update_movie_message(bot, base_name))
-        active_update_tasks.add(task)
-        task.add_done_callback(active_update_tasks.discard)
-        pending_updates.pop(base_name, None)
-
-    pending_updates[base_name] = loop.call_later(delay, _run_update)
+    pending_updates[base_name] = loop.call_later(
+        delay,
+        lambda: asyncio.create_task(update_movie_message(bot, base_name))
+    )
 def extract_media_info(filename: str, caption: str):
     filename = normalize(clean_mentions_links(filename).title())
     caption_clean = clean_mentions_links(caption).lower() if caption else ""
@@ -518,7 +514,7 @@ def generate_movie_message(movie_doc, base_name):
     all_tags = set()
     episodes_by_season = defaultdict(set)
 
-    for file in (movie_doc.get("files") or []):
+    for file in movie_doc["files"]:
         if file["quality"] != "N/A":
             all_qualities.update(q.strip() for q in file["quality"].split(",") if q.strip())
         if file["language"] != "N/A":
@@ -571,14 +567,14 @@ def generate_movie_message(movie_doc, base_name):
         if epi_str:
             epi_block = f"📺 ᴇᴘɪsᴏᴅᴇs : <b>\n{epi_str}</b>"
 
-    genres = movie_doc.get("genres") or "N/A"
+    genres = movie_doc.get("genres", "N/A")
     quality_str = ", ".join(sorted(all_qualities)) if all_qualities else "N/A"
     language_str = ", ".join(sorted(all_languages)) if all_languages else "N/A"
     ott_str = ", ".join(sorted(all_ott_platforms)) if all_ott_platforms else "N/A"
 
     return script.MOVIE_UPDATE_NOTIFY_TXT.format(
-        poster_url=movie_doc.get("poster_url") or "",
-        imdb_url=movie_doc.get("imdb_url") or "",
+        poster_url=movie_doc.get("poster_url", ""),
+        imdb_url=movie_doc.get("imdb_url", ""),
         filename=base_name,
         tag=primary_tag,
         genres=genres,
@@ -586,6 +582,6 @@ def generate_movie_message(movie_doc, base_name):
         quality=quality_str,
         language=language_str,
         episodes=epi_block,
-        rating=movie_doc.get("rating") or "N/A",
-        search_link=temp.B_LINK or ""
+        rating=movie_doc.get("rating", "N/A"),
+        search_link=temp.B_LINK
     )
