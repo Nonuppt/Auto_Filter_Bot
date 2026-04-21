@@ -11,7 +11,7 @@ from pyrogram.types import (
 )
 from pyrogram.errors import MessageNotModified, MessageTooLong
 from plugins.Dreamxfutures.Imdbposter import get_movie_detailsx
-from info import ADMINS, MOVIE_UPDATE_CHANNEL, ABOVE_PREVIEW
+from info import ADMINS, MOVIE_UPDATE_CHANNELS, ABOVE_PREVIEW
 from utils import temp
 
 #code is created by @bharath_boy for public use so atleast don't remove credits
@@ -601,7 +601,7 @@ async def finalize_and_post(client: Client, query: CallbackQuery, session_id: in
     logger.info(f"Final Caption Length: {len(final_caption)} characters.")
 
     try:
-        for chat_id in MOVIE_UPDATE_CHANNEL:
+        for chat_id in MOVIE_UPDATE_CHANNELS:
             if mode == "Photo":
                 await client.send_photo(
                     chat_id=chat_id, photo=poster_to_use,

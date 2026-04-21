@@ -6,7 +6,7 @@ from collections import defaultdict
 from plugins.Dreamxfutures.Imdbposter import get_movie_detailsx, fetch_image, get_movie_details
 from database.users_chats_db import db
 from pyrogram import Client, filters, enums
-from info import CHANNELS, MOVIE_UPDATE_CHANNEL, LINK_PREVIEW, ABOVE_PREVIEW, BAD_WORDS, LANDSCAPE_POSTER, TMDB_POSTER
+from info import CHANNELS, MOVIE_UPDATE_CHANNELS, LINK_PREVIEW, ABOVE_PREVIEW, BAD_WORDS, LANDSCAPE_POSTER, TMDB_POSTER
 from Script import script
 from database.ia_filterdb import save_file
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -380,7 +380,7 @@ async def send_movie_update(bot, base_name):
     message_ids = {}
     is_photo = False
 
-    for chat_id in MOVIE_UPDATE_CHANNEL:
+    for chat_id in MOVIE_UPDATE_CHANNELS:
         max_retries = 3
         for attempt in range(max_retries):
             try:
@@ -440,13 +440,9 @@ async def update_movie_message(bot, base_name):
         # Migration logic
         if not message_ids:
             legacy_id = movie_doc.get("message_id")
+            from info import MOVIE_UPDATE_CHANNEL
             if legacy_id:
-                # Use the first ID from the list for legacy migration key if available
-                channel_id = MOVIE_UPDATE_CHANNEL[0] if MOVIE_UPDATE_CHANNEL else None
-                if not channel_id:
-                    await send_movie_update(bot, base_name)
-                    return
-                message_ids = {str(channel_id): legacy_id}
+                message_ids = {str(MOVIE_UPDATE_CHANNEL): legacy_id}
                 await db.movie_updates.update_one(
                     {"_id": base_name},
                     {"$set": {"message_ids": message_ids}, "$unset": {"message_id": ""}}
