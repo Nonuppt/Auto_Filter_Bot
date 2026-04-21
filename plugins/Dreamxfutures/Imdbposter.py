@@ -388,12 +388,12 @@ async def old_get_movie_details(query, id=False, file=None):
         if not id:
             query = query.strip().lower()
             title = query
-            year = re.findall(r'[1-2]\d{3}$', query, re.IGNORECASE)
+            year = re.findall(r'[1-2][0-9]{3}$', query, re.IGNORECASE)
             if year:
                 year = list_to_str(year[:1])
                 title = query.replace(year, "").strip()
             elif file is not None:
-                year = re.findall(r'[1-2]\d{3}', file, re.IGNORECASE)
+                year = re.findall(r'[1-2][0-9]{3}', file, re.IGNORECASE)
                 if year:
                     year = list_to_str(year[:1])
             else:

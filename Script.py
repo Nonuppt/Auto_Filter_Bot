@@ -3,7 +3,7 @@ class script(object):
 
 <b>ʜᴇʏ {}, {}</b>
 
-<b>🤖 ɪ ᴀᴍ <a href=https://t.me/{}>{}</a>, ᴛʜᴇ ᴍᴏꜱᴛ ᴘᴏᴡᴇʀꜰᴜʟ ᴀᴜᴛᴏ ꜰɪʟᴛᴇʀ ʙᴏᴛ ᴡɪᴛʜ ᴘʀᴇᴍɪᴜᴍ ꜰᴇᴀᴛᴜʀᴇꜱ.</b>
+<b>🤖 ɪ ᴀᴍ <a href="https://t.me/{}">{}</a>, ᴛʜᴇ ᴍᴏꜱᴛ ᴘᴏᴡᴇʀꜰᴜʟ ᴀᴜᴛᴏ ꜰɪʟᴛᴇʀ ʙᴏᴛ ᴡɪᴛʜ ᴘʀᴇᴍɪᴜᴍ ꜰᴇᴀᴛᴜʀᴇꜱ.</b>
 """
 
 
@@ -11,7 +11,7 @@ class script(object):
 
 <b>ʜᴇʏ {},</b>
 
-<b>🤖 ɪ ᴀᴍ <a href=https://t.me/{}>{}</a>, ᴛʜᴇ ᴍᴏꜱᴛ ᴘᴏᴡᴇʀꜰᴜʟ ᴀᴜᴛᴏ ꜰɪʟᴛᴇʀ ʙᴏᴛ ᴡɪᴛʜ ᴘʀᴇᴍɪᴜᴍ ꜰᴇᴀᴛᴜʀᴇꜱ.</b>"""
+<b>🤖 ɪ ᴀᴍ <a href="https://t.me/{}">{}</a>, ᴛʜᴇ ᴍᴏꜱᴛ ᴘᴏᴡᴇʀꜰᴜʟ ᴀᴜᴛᴏ ꜰɪʟᴛᴇʀ ʙᴏᴛ ᴡɪᴛʜ ᴘʀᴇᴍɪᴜᴍ ꜰᴇᴀᴛᴜʀᴇꜱ.</b>"""
 
     
     HELP_TXT = """<b>
@@ -35,12 +35,12 @@ class script(object):
 </b>"""
 
     ABOUT_TXT = """<b>╭────[ ᴍʏ ᴅᴇᴛᴀɪʟs ]────⍟
-├⍟ Mʏ Nᴀᴍᴇ : <a href=https://t.me/{}>{}</a>
-├⍟ Dᴇᴠᴇʟᴏᴘᴇʀ : <a href={}>ᴏᴡɴᴇʀ</a> 
-├⍟ Lɪʙʀᴀʀʏ : <a href='https://docs.pyrogram.org/'>ᴘʏʀᴏɢʀᴀᴍ</a>
-├⍟ Lᴀɴɢᴜᴀɢᴇ : <a href='https://www.python.org/download/releases/3.0/'>ᴘʏᴛʜᴏɴ 𝟹</a> 
-├⍟ Dᴀᴛᴀʙᴀsᴇ : <a href='https://www.mongodb.com/'>ᴍᴏɴɢᴏ ᴅʙ</a> 
-├⍟ Bᴏᴛ Sᴇʀᴠᴇʀ : <a href='https://heroku.com/'>ʜᴇʀᴏᴋᴜ</a> 
+├⍟ Mʏ Nᴀᴍᴇ : <a href="https://t.me/{}">{}</a>
+├⍟ Dᴇᴠᴇʟᴏᴘᴇʀ : <a href="{}">ᴏᴡɴᴇʀ</a>
+├⍟ Lɪʙʀᴀʀʏ : <a href="https://docs.pyrogram.org/">ᴘʏʀᴏɢʀᴀᴍ</a>
+├⍟ Lᴀɴɢᴜᴀɢᴇ : <a href="https://www.python.org/download/releases/3.0/">ᴘʏᴛʜᴏɴ 𝟹</a>
+├⍟ Dᴀᴛᴀʙᴀsᴇ : <a href="https://www.mongodb.com/">ᴍᴏɴɢᴏ ᴅʙ</a>
+├⍟ Bᴏᴛ Sᴇʀᴠᴇʀ : <a href="https://heroku.com/">ʜᴇʀᴏᴋᴜ</a>
 ├⍟ Bᴜɪʟᴅ Sᴛᴀᴛᴜs : ᴠ1.4 [ ꜱᴛᴀʙʟᴇ ]
 ╰───────────────⍟</b>"""
     RESTART_TXT = """
@@ -204,7 +204,7 @@ Nᴀᴍᴇ - {}
 
 <blockquote>🎉 <b>ꜱᴇʟᴇᴄᴛ ʏᴏᴜʀ ᴅᴏɴᴀᴛɪᴏɴ ᴍᴇᴛʜᴏᴅ 👇</b></blockquote>
 
-➤ 📷 Qʀ ᴄᴏᴅᴇ → <a href='{}'>ᴄʟɪᴄᴋ ʜᴇʀᴇ ᴛᴏ ꜱᴄᴀɴ</a>  
+➤ 📷 Qʀ ᴄᴏᴅᴇ → <a href="{}">ᴄʟɪᴄᴋ ʜᴇʀᴇ ᴛᴏ ꜱᴄᴀɴ</a>
 ➤ 💸 ᴜᴘɪ ɪᴅ → <code>{}</code>
 
 ‼️ <b>ᴍᴜꜱᴛ ꜱᴇɴᴅ ꜱᴄʀᴇᴇɴꜱʜᴏᴛ ᴀꜰᴛᴇʀ ᴅᴏɴᴀᴛɪɴɢ.</b>"""
@@ -229,11 +229,11 @@ Nᴀᴍᴇ : {}
 
 Mᴇꜱꜱᴀɢᴇ : <b>{}</b>"""
     
-    CAPTION = """<b><a href="https://t.me/Pixell_Pulse">{file_name}</a></b>\n\n<b>⚜️ Powered By : <a href=https://t.me/Pixell_Pulse">[ ℙ𝕚𝕩𝕖𝕝𝕝 ℙ𝕦𝕝𝕤𝕖 ]</a></b>"""
+    CAPTION = """<b><a href="https://t.me/Pixell_Pulse">{file_name}</a></b>\n\n<b>⚜️ Powered By : <a href="https://t.me/Pixell_Pulse">[ ℙ𝕚𝕩𝕖𝕝𝕝 ℙ𝕦𝕝𝕤𝕖 ]</a></b>"""
 
     
     MOVIE_UPDATE_NOTIFY_TXT = """
-</b><a href={poster_url}>📥</a><a href={imdb_url}>New {tag} Added</a></b>
+<a href="{poster_url}">📥</a><a href="{imdb_url}">New {tag} Added</a>
 
 <blockquote>✨ ᴛɪᴛʟᴇ : <code>{filename}</code>
 
@@ -249,9 +249,9 @@ Mᴇꜱꜱᴀɢᴇ : <b>{}</b>"""
 """
 
 
-    IMDB_TEMPLATE_TXT = """<b><a href={url}>{title} (<a href={url}/releaseinfo>{year}</a>)
+    IMDB_TEMPLATE_TXT = """<b><a href="{url}">{title} ({year})</a></b>
 
-ʀᴀᴛɪɴɢ : <a href={url}/ratings>{rating}</a>
+ʀᴀᴛɪɴɢ : <a href="{url}/ratings">{rating}</a>
 ɢᴇɴʀᴇ : {genres}
 ᴀᴜᴅɪᴏ : {languages}
 
@@ -288,7 +288,7 @@ sʜᴏᴡɴ ɪɴ : {remaining_seconds} <i>sᴇᴄ</i>⚡️
 ◉ 60 ᴅᴀʏꜱ - 75 ₹  / 75 ꜱᴛᴀʀ
 
 •─────•─────────•─────•
-🏷️ <a href='https://t.me/dreamxbotz'>ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ ᴘʀᴏᴏꜰ</a>
+🏷️ <a href="https://t.me/dreamxbotz">ꜱᴜʙꜱᴄʀɪᴘᴛɪᴏɴ ᴘʀᴏᴏꜰ</a>
 
 ‼️ ᴍᴜꜱᴛ ꜱᴇɴᴅ ꜱᴄʀᴇᴇɴꜱʜᴏᴛ ᴀꜰᴛᴇʀ ᴘᴀʏᴍᴇɴᴛ.
 ‼️ ᴀꜰᴛᴇʀ ꜱᴇɴᴅɪɴɢ ꜱᴄʀᴇᴇɴꜱʜᴏᴛ ɢɪᴠᴇ ᴜꜱ ꜱᴏᴍᴇᴛɪᴍᴇꜱ ᴛᴏ ᴀᴅᴅ ʏᴏᴜ ɪɴ ᴘʀᴇᴍɪᴜᴍ ʟɪꜱᴛ."""
@@ -360,7 +360,7 @@ sʜᴏᴡɴ ɪɴ : {remaining_seconds} <i>sᴇᴄ</i>⚡️
 🏷️ <b>ᴘᴀʏᴍᴇɴᴛ ᴍᴇᴛʜᴏᴅꜱ</b>
 
 💸 ᴜᴘɪ ɪᴅ → <code>{}</code>  
-📷 ǫʀ ᴄᴏᴅᴇ → <a href='{}'>ᴄʟɪᴄᴋ ʜᴇʀᴇ ᴛᴏ ꜱᴄᴀɴ</a>  
+📷 ǫʀ ᴄᴏᴅᴇ → <a href="{}">ᴄʟɪᴄᴋ ʜᴇʀᴇ ᴛᴏ ꜱᴄᴀɴ</a>
 
 🧾 ᴘᴀʏ ᴀᴄᴄᴏʀᴅɪɴɢ ᴛᴏ ʏᴏᴜʀ ᴘʟᴀɴ ᴀɴᴅ ᴇɴᴊᴏʏ ᴘʀᴇᴍɪᴜᴍ!
 
@@ -379,7 +379,7 @@ sʜᴏᴡɴ ɪɴ : {remaining_seconds} <i>sᴇᴄ</i>⚡️
 ○ ᴍᴜʟᴛɪ-ᴘʟᴀʏᴇʀ sᴛʀᴇᴀᴍɪɴɢ ʟɪɴᴋs
 ○ ᴀᴅ-ғʀᴇᴇ ᴇxᴘᴇʀɪᴇɴᴄᴇ
 
-👨‍💻 ᴄᴏɴᴛᴀᴄᴛ ᴛʜᴇ <a href='https://t.me/dreamxbotz'>Owner</a> ᴛᴏ ɢᴇᴛ ʏᴏᴜʀ ᴛʀɪᴀʟ.
+👨‍💻 ᴄᴏɴᴛᴀᴄᴛ ᴛʜᴇ <a href="https://t.me/dreamxbotz">Owner</a> ᴛᴏ ɢᴇᴛ ʏᴏᴜʀ ᴛʀɪᴀʟ.
 
 ➛ ᴜꜱᴇ /plan ᴛᴏ ꜱᴇᴇ ᴀʟʟ ᴏᴜʀ ᴘʟᴀɴꜱ ᴀᴛ ᴏɴᴄᴇ.
 ➛ ᴄʜᴇᴄᴋ ʏᴏᴜʀ ᴀᴄᴛɪᴠᴇ ᴘʟᴀɴ ʙʏ ᴜꜱɪɴɢ : /myplan</b>"""
@@ -397,14 +397,14 @@ sʜᴏᴡɴ ɪɴ : {remaining_seconds} <i>sᴇᴄ</i>⚡️
     
  ᴘᴀʏ ᴀᴍᴍᴏᴜɴᴛ ᴀᴄᴄᴏʀᴅɪɴɢ ᴛᴏ ʏᴏᴜʀ ᴘʟᴀɴ ᴀɴᴅ ᴇɴᴊᴏʏ ᴘʀᴇᴍɪᴜᴍ ᴍᴇᴍʙᴇʀꜱʜɪᴘ !
 
-📸 ǫʀ ᴄᴏᴅᴇ - <a href='{}'>ᴄʟɪᴄᴋ ʜᴇʀᴇ ᴛᴏ ꜱᴄᴀɴ</a>
+📸 ǫʀ ᴄᴏᴅᴇ - <a href="{}">ᴄʟɪᴄᴋ ʜᴇʀᴇ ᴛᴏ ꜱᴄᴀɴ</a>
 
 ‼️ ᴍᴜsᴛ sᴇɴᴅ sᴄʀᴇᴇɴsʜᴏᴛ ᴀғᴛᴇʀ ᴘᴀʏᴍᴇɴᴛ.</b>"""
 
     SOURCE_TXT ="""<b>ՏOᑌᖇᑕᗴ ᑕOᗪᗴ : 👇 </b>
 
 This Is An Open-Source Project. You Can Use It Freely, But Selling The Source Code Is Strictly Prohibited.\n
-ꜱᴏᴜʀᴄᴇ ᴄᴏᴅᴇ ʜᴇʀᴇ ◉› :<a href=https://github.com/DreamXBotz/Auto_Filter_Bot.git>𝓓𝓻𝓮𝓪𝓶𝔁𝓑𝓸𝓽𝔃</a>\n """
+ꜱᴏᴜʀᴄᴇ ᴄᴏᴅᴇ ʜᴇʀᴇ ◉› :<a href="https://github.com/DreamXBotz/Auto_Filter_Bot.git">𝓓𝓻𝓮𝓪𝓶𝔁𝓑𝓸𝓽𝔃</a>\n """
 
     SETTING_TXT = """    
 <u>ꜱᴇᴛᴛɪɴɢꜱ</u> :
@@ -458,7 +458,7 @@ This Is An Open-Source Project. You Can Use It Freely, But Selling The Source Co
 
     THIRDT_VERIFICATION_TEXT = """<b><i>👋 ʜᴇʏ {},
     
-📌 ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴠᴇʀɪꜰɪᴇᴅ, ᴛᴀᴘ ᴏɴ ᴛʜᴇ ᴠᴇʀɪꜰʏ ʟɪɴᴋ & ɢᴇᴛ ᴜɴʟɪᴍɪᴛᴇᴅ ᴀᴄᴄᴇss ꜰᴏʀ ɴᴇxᴛ ꜰᴜʟʟ ᴅᴀʏ.</u>
+📌 ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴠᴇʀɪꜰɪᴇᴅ, ᴛᴀᴘ ᴏɴ ᴛʜᴇ ᴠᴇʀɪꜰʏ ʟɪɴᴋ & ɢᴇᴛ ᴜɴʟɪᴍɪᴛᴇᴅ ᴀᴄᴄᴇss ꜰᴏʀ ɴᴇxᴛ ꜰᴜʟʟ ᴅᴀʏ.
 
 #ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ:- 3/3 ✓
 
