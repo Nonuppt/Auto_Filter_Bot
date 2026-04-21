@@ -45,3 +45,4 @@ async def keep_alive():
                         logging.warning(f"⚠️ Ping Error! Status: {resp.status}")
             except Exception as e:
                 logging.error(f"❌ Ping Failed: {e}")           
+
