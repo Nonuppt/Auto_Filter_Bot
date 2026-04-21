@@ -87,6 +87,7 @@ EP_ONLY_RANGE = re.compile(r'\b(?:EP|Episode)0*(\d{1,3})\s*-\s*0*(\d{1,3})\b',re
 MEDIA_FILTER = filters.document | filters.video | filters.audio
 locks = defaultdict(asyncio.Lock)
 pending_updates = {}
+_running_tasks = set()
 error_tmdb = False
 
 def clean_mentions_links(text: str) -> str:
@@ -127,10 +128,15 @@ def schedule_update(bot, base_name, delay=5):
         if not handle.cancelled():
             handle.cancel()
     
+    def _run_task():
+        task = asyncio.create_task(update_movie_message(bot, base_name))
+        _running_tasks.add(task)
+        task.add_done_callback(_running_tasks.discard)
+
     loop = asyncio.get_event_loop()
     pending_updates[base_name] = loop.call_later(
         delay,
-        lambda: asyncio.create_task(update_movie_message(bot, base_name))
+        _run_task
     )
 def extract_media_info(filename: str, caption: str):
     filename = normalize(clean_mentions_links(filename).title())
@@ -324,11 +330,11 @@ async def _process_with_lock(bot, filename, caption, media_info, base_name, proc
             "poster_url": details.get("backdrop_url") if LANDSCAPE_POSTER and TMDB_POSTER and details.get("backdrop_url") and not error_tmdb else details.get("poster_url"),
             "genres": genres,
             "rating": details.get("rating", "N/A"),
-            "imdb_url": details.get("url", "")if not TMDB_POSTER or error_tmdb else details.get("tmdb_url"),
+            "imdb_url": details.get("url", "") if not TMDB_POSTER or error_tmdb else details.get("tmdb_url"),
             "year": media_info["year"] or details.get("year"),
             "tag": media_info["tag"],
             "ott_platform": media_info["ott_platform"],
-            "message_id": None,
+            "message_ids": {},
             "is_photo": False,
             "error_tmdb": error_tmdb,
             "is_backdrop": details.get("backdrop_url")
@@ -573,8 +579,8 @@ def generate_movie_message(movie_doc, base_name):
     ott_str = ", ".join(sorted(all_ott_platforms)) if all_ott_platforms else "N/A"
 
     return script.MOVIE_UPDATE_NOTIFY_TXT.format(
-        poster_url=movie_doc.get("poster_url", ""),
-        imdb_url=movie_doc.get("imdb_url", ""),
+        poster_url=movie_doc.get("poster_url") or "",
+        imdb_url=movie_doc.get("imdb_url") or "",
         filename=base_name,
         tag=primary_tag,
         genres=genres,
