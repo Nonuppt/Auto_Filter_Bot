@@ -32,7 +32,7 @@ IGNORE_WORDS = {
     "mar", "marathi", "guj", "gujarati", "urd", "urdu", "kor", "korean", "jpn", 
     "japanese", "nf", "netflix", "sonyliv", "sony", "sliv", "amzn", "prime", 
     "primevideo", "hotstar", "zee5", "jio", "jhs", "aha", "hbo", "paramount", 
-    "apple", "hoichoi", "sunnxt", "viki", "stage"
+    "apple", "hoichoi", "sunnxt", "viki"
 }|BAD_WORDS
 
 # Constants
@@ -59,7 +59,7 @@ OTT_PLATFORMS = {
     "hotstar": "Disney+ Hotstar", "zee5": "Zee5",
     "jio": "JioHotstar", "jhs": "JioHotstar",
     "aha": "Aha", "hbo": "HBO Max", "paramount": "Paramount+",
-    "apple": "Apple TV+", "hoichoi": "Hoichoi", "sunnxt": "Sun NXT", "viki": "Viki", "stage": "Stage"
+    "apple": "Apple TV+", "hoichoi": "Hoichoi", "sunnxt": "Sun NXT", "viki": "Viki"
 }
 
 STANDARD_GENRES = {
