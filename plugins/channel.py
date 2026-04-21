@@ -87,6 +87,7 @@ EP_ONLY_RANGE = re.compile(r'\b(?:EP|Episode)0*(\d{1,3})\s*-\s*0*(\d{1,3})\b',re
 MEDIA_FILTER = filters.document | filters.video | filters.audio
 locks = defaultdict(asyncio.Lock)
 pending_updates = {}
+_background_tasks = set()
 error_tmdb = False
 
 def clean_mentions_links(text: str) -> str:
@@ -127,11 +128,16 @@ def schedule_update(bot, base_name, delay=5):
         if not handle.cancelled():
             handle.cancel()
     
+    def task_done_callback(task):
+        _background_tasks.discard(task)
+
+    def start_task():
+        task = asyncio.create_task(update_movie_message(bot, base_name))
+        _background_tasks.add(task)
+        task.add_done_callback(task_done_callback)
+
     loop = asyncio.get_event_loop()
-    pending_updates[base_name] = loop.call_later(
-        delay,
-        lambda: asyncio.create_task(update_movie_message(bot, base_name))
-    )
+    pending_updates[base_name] = loop.call_later(delay, start_task)
 def extract_media_info(filename: str, caption: str):
     filename = normalize(clean_mentions_links(filename).title())
     caption_clean = clean_mentions_links(caption).lower() if caption else ""
@@ -258,17 +264,22 @@ async def media_handler(bot, message):
     if not media:
         return
 
+    logger.info(f"Media received in monitored channel: {media.file_name}")
     media.file_type = next(ft for ft in ("document", "video", "audio") if hasattr(message, ft))
     media.caption = message.caption or ""
     success, info = await save_file(media)
     if not success:
+        logger.info(f"Media skip notification: File already exists or indexing failed (Code: {info})")
         return
 
     try:
         if await db.movie_update_status(bot.me.id):
+            logger.info(f"Triggering movie update notification for: {media.file_name}")
             await process_and_send_update(bot, media.file_name, media.caption)
+        else:
+            logger.info("Movie update notification is disabled in database settings.")
     except Exception:
-        logger.exception("Error processing media")
+        logger.exception("Error processing media for movie update notification")
 
 async def process_and_send_update(bot, filename, caption):
     try:
@@ -381,37 +392,42 @@ async def send_movie_update(bot, base_name):
     is_photo = False
 
     for chat_id in MOVIE_UPDATE_CHANNEL:
-        max_retries = 3
-        for attempt in range(max_retries):
-            try:
-                if resized_poster:
-                    msg = await bot.send_photo(
-                        chat_id=chat_id,
-                        photo=resized_poster,
-                        caption=text,
-                        reply_markup=buttons,
-                        parse_mode=enums.ParseMode.HTML
-                    )
-                    is_photo = True
-                else:
-                    send_params = {
-                        "chat_id": chat_id,
-                        "text": text,
-                        "reply_markup": buttons,
-                        "parse_mode": enums.ParseMode.HTML
-                    }
-                    if poster_url and LINK_PREVIEW:
-                        send_params["invert_media"] = ABOVE_PREVIEW
-                    msg = await bot.send_message(**send_params)
-                    is_photo = False
+        try:
+            max_retries = 3
+            for attempt in range(max_retries):
+                try:
+                    if resized_poster:
+                        msg = await bot.send_photo(
+                            chat_id=chat_id,
+                            photo=resized_poster,
+                            caption=text,
+                            reply_markup=buttons,
+                            parse_mode=enums.ParseMode.HTML
+                        )
+                        is_photo = True
+                    else:
+                        send_params = {
+                            "chat_id": chat_id,
+                            "text": text,
+                            "reply_markup": buttons,
+                            "parse_mode": enums.ParseMode.HTML
+                        }
+                        if poster_url and LINK_PREVIEW:
+                            send_params["invert_media"] = ABOVE_PREVIEW
+                        msg = await bot.send_message(**send_params)
+                        is_photo = False
 
-                message_ids[str(chat_id)] = msg.id
-                break
-            except FloodWait as e:
-                await asyncio.sleep(e.value + 2)
-            except Exception as e:
-                logger.error(f"Failed to send movie update to {chat_id}: {e}")
-                break
+                    message_ids[str(chat_id)] = msg.id
+                    break
+                except FloodWait as e:
+                    await asyncio.sleep(e.value + 2)
+                except Exception as e:
+                    logger.error(f"Failed attempt {attempt + 1} to send movie update to {chat_id}: {e}")
+                    if attempt == max_retries - 1:
+                        raise
+        except Exception as e:
+            logger.error(f"Final failure to send movie update to {chat_id}: {e}")
+            continue
 
     if message_ids:
         await db.movie_updates.update_one(
