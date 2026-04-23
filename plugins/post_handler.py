@@ -599,24 +599,34 @@ async def finalize_and_post(client: Client, query: CallbackQuery, session_id: in
     logger.info(f"Poster to use: {poster_to_use}")
     logger.info(f"Final Caption Length: {len(final_caption)} characters.")
 
-    try:
-        if mode == "Photo":
-            await client.send_photo(
-                chat_id=MOVIE_UPDATE_CHANNEL, photo=poster_to_use,
-                caption=final_caption, reply_markup=final_keyboard
-            )
-        else:
-            text_content = f"<a href='{poster_to_use}'>&#8205;</a>{final_caption}" if poster_to_use else final_caption
-            await client.send_message(
-                chat_id=MOVIE_UPDATE_CHANNEL, text=text_content,
-                
-                reply_markup=final_keyboard, disable_web_page_preview=False,
-                invert_media=ABOVE_PREVIEW
-            )
+    success_count = 0
+    fail_count = 0
+    for channel_id in MOVIE_UPDATE_CHANNEL:
+        try:
+            if mode == "Photo":
+                await client.send_photo(
+                    chat_id=channel_id, photo=poster_to_use,
+                    caption=final_caption, reply_markup=final_keyboard
+                )
+            else:
+                text_content = f"<a href='{poster_to_use}'>&#8205;</a>{final_caption}" if poster_to_use else final_caption
+                await client.send_message(
+                    chat_id=channel_id, text=text_content,
+                    reply_markup=final_keyboard, disable_web_page_preview=False,
+                    invert_media=ABOVE_PREVIEW
+                )
+            success_count += 1
+        except Exception as e:
+            fail_count += 1
+            logger.error(f"Failed to post to channel {channel_id}: {e}")
 
-        await status_msg.edit("✅ Post has been sent to the update channel.")
-        logger.info(
-            f"Successfully posted '{session['movie_name']}' to the update channel.")
+    try:
+        if success_count > 0:
+            await status_msg.edit(f"✅ Post has been sent to {success_count} update channel(s).{' (Failed: ' + str(fail_count) + ')' if fail_count > 0 else ''}")
+            logger.info(
+                f"Successfully posted '{session['movie_name']}' to {success_count} update channel(s).")
+        else:
+            await status_msg.edit(f"❌ Failed to post to any update channel. (Failed: {fail_count})")
 
     except MessageTooLong:
         error_text = "<b>Post Failed</b>\n\nThe final caption is too long for a Telegram message (limit is 4096 characters). Please shorten the plot or other text and try again."
