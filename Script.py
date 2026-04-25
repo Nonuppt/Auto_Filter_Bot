@@ -229,7 +229,7 @@ Nᴀᴍᴇ : {}
 
 Mᴇꜱꜱᴀɢᴇ : <b>{}</b>"""
     
-    CAPTION = """<b><a href="https://t.me/Pixell_Pulse">{file_name}</a></b>\n\n<b>⚜️ Powered By : <a href="https://t.me/Durgesh_9ty">[ 𝐃𝕌𝐑𝔾𝐄𝕊𝐇 ]</a></b>"""
+    CAPTION = """<b><a href="https://t.me/Pixell_Pulse">{caption}</a></b>\n\n<b>⚜️ Powered By : <a href="https://t.me/Durgesh_9ty">[ 𝐃𝕌𝐑𝔾𝐄𝕊𝐇 ]</a></b>"""
 
     
     MOVIE_UPDATE_NOTIFY_TXT = """
